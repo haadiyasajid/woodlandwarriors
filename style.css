@@ -1,0 +1,76 @@
+* {
+    box-sizing: border-box;
+}
+
+#mainDiv {
+    position: relative;
+    display: inline-block;
+}
+
+#topBar {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+#scoreInfo {
+    position: absolute;
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    top:0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+.playerHealth {
+    height: 30px;
+    width: 100%;
+    position: absolute;
+    top:0;
+    right: 0;
+    bottom: 0;
+}
+
+.playerHealthContainer {
+    position: relative;
+    align-items: flex-end;
+    height: 30px;
+    width: 100%
+}
+
+.playerHealthBg {
+    background-color:darkgray;
+    height: 30px;
+    width: 100%;
+}
+
+#player1health {
+    background-color: chocolate;
+    left:0;
+}
+
+#timer {
+    background-color: aquamarine;
+    height: 50px;
+    width: 50px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#player2health {
+    background-color: darkmagenta;
+    width: 100%;
+}
+
+#player2healthcontainer {
+    display: flex;
+    justify-content: flex-end;
+    width:100%;
+}

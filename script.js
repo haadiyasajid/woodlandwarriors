@@ -54,8 +54,35 @@ const player1 = new Player(
         offset: {
             x: 0,
             y: 0
-        }
+        },
+        imgSrc: './imgs/Huntress_1/Sprites/Idle.png',
+        framesMax:8,
+        scale: 2.5,
+        offset: {
+            x:100,
+            y:87
+        },
+        sprites: {
+            idle: {
+                spriteSrc: './imgs/Huntress_1/Sprites/Idle.png',
+                framesMax:8,
+            },
+            run: {
+                spriteSrc: './imgs/Huntress_1/Sprites/Run.png',
+                framesMax:8,
 
+            },
+            jump: {
+                spriteSrc: './imgs/Huntress_1/Sprites/Jump.png',
+                framesMax:2,
+
+            },
+            fall: {
+                spriteSrc: './imgs/Huntress_1/Sprites/Fall.png',
+                framesMax:2
+
+            }
+        }
     }
 );
 
@@ -75,69 +102,52 @@ const player2 = new Player(
 player1.draw();
 player2.draw();
 
-function collissionDetection({
-    player1,
-    player2
-}) {
-    return (player1.attackBox.position.x + player1.attackBox.width >= player2.position.x
-        && player1.attackBox.position.x <= player2.position.x + player2.width
-        && player1.attackBox.position.y + player1.attackBox.height >= player2.position.y
-        && player1.attackBox.position.y <= player2.position.y + player2.height)
-
-}
-
-function setWinner({player1, player2, timerId}) {
-    clearTimeout(timerId)
-    document.getElementById("scoreInfo").style.display = 'flex';
-    if (player1.health == player2.health) {
-        document.getElementById("scoreInfo").innerHTML = "Tie!"
-    }
-    if (player1.health > player2.health) {
-        document.getElementById("scoreInfo").innerHTML = "Player 1 wins!"
-    }
-    if (player1.health < player2.health) {
-        document.getElementById("scoreInfo").innerHTML = "Player 2 wins!"
-    }
-}
 let timerID
 let timer = 60
-function countDown() {
-    if (timer > 0) {
-        timerId = setTimeout(countDown, 1000)
-        timer--;
-        document.getElementById('timer').innerHTML = timer;
-    }
 
-    else {
-        setWinner({
-            player1:player1,
-            player2:player2,
-            timerId
-        });
-    }
-}
 
-countDown()
+
+countDown();
 
 function animate() {
+
+    //       -----Background------
     window.requestAnimationFrame(animate)
     canvasContext.fillStyle = 'black'
     canvasContext.fillRect(0, 0, canvas.width, canvas.height)
     bg.update();
-    player1.update()
-    player2.update()
 
+    
+     //       -----Player 1------
+    player1.update();
     player1.velocity.x = 0
-    player2.velocity.x = 0
 
-    //Player 1 animation 
+    //Default to set for every frame
+    player1.setSprite('idle');
+
+    //Player 1 animation -left,right movement
     if (KEYS.a.pressed) {
         player1.velocity.x = -MOVEMENT_SPEED
+        player1.setSprite('run');
+        //player1.image.src = './imgs/Huntress_1/Sprites/Run.png';
+
     } else if (KEYS.d.pressed) {
         player1.velocity.x = MOVEMENT_SPEED
+        player1.setSprite('run');
+        
+    }
+    //Player 1 Jump
+    if(player1.velocity.y < 0) {
+       player1.setSprite('jump');
+    } else if(player1.velocity.y>0) {
+        player1.setSprite('fall');
     }
 
-    //Player 2 animation 
+     //       -----Player 2------
+    player2.velocity.x = 0
+    //player2.update()
+
+    //Player 2 animation- left,right movement 
     if (KEYS.ArrowLeft.pressed) {
         player2.velocity.x = -MOVEMENT_SPEED
     } else if (KEYS.ArrowRight.pressed) {
@@ -213,9 +223,9 @@ window.addEventListener('keydown', (event) => {
     }
 })
 
-window.addEventListener('keydown', (event) => {
-    console.log("You pressed: " + event.key)
-})
+// window.addEventListener('keydown', (event) => {
+//     console.log("You pressed: " + event.key)
+// })
 
 window.addEventListener('keyup', (event) => {
     switch (event.key) {

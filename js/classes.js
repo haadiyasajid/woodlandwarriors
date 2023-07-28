@@ -118,14 +118,19 @@ class Player extends Sprite  {
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y
 
+        //Movement
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
 
+        //Application of gravity
         if (this.position.y + this.height + this.velocity.y >= canvas.height-33) { //33 is the height of the ground
-            this.velocity.y = 0;
+            this.velocity.y = 0; //Player is on the ground
+            this.position.y=339
         } else {
             this.velocity.y += GRAVITY //adds accelaration as the player moves down
         }
+
+        console.log('y='+this.position.y);
     }
 
     attack() {

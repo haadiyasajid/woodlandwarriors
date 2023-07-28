@@ -80,7 +80,10 @@ const player1 = new Player(
             fall: {
                 spriteSrc: './imgs/Huntress_1/Sprites/Fall.png',
                 framesMax:2
-
+            },
+            attack: {
+                spriteSrc: './imgs/Huntress_1/Sprites/Attack1.png',
+                framesMax:5
             }
         }
     }
@@ -95,6 +98,37 @@ const player2 = new Player(
         offset: {
             x: -50,
             y: 0
+        },
+        imgSrc: './imgs/Huntress_2/Sprites/Idle.png',
+        framesMax:10,
+        scale: 2.5,
+        offset: {
+            x:100,
+            y:12
+       },
+        sprites: {
+            idle: {
+                spriteSrc: './imgs/Huntress_2/Sprites/Idle.png',
+                framesMax:10,
+            },
+            run: {
+                spriteSrc: './imgs/Huntress_2/Sprites/Run.png',
+                framesMax:8,
+
+            },
+            jump: {
+                spriteSrc: './imgs/Huntress_2/Sprites/Jump.png',
+                framesMax:2,
+
+            },
+            fall: {
+                spriteSrc: './imgs/Huntress_2/Sprites/Fall.png',
+                framesMax:2
+            },
+            attack: {
+                spriteSrc: './imgs/Huntress_2/Sprites/Attack.png',
+                framesMax:6
+            }
         }
     }
 );
@@ -143,16 +177,27 @@ function animate() {
         player1.setSprite('fall');
     }
 
-     //       -----Player 2------
+     //       -----Player 2-----
+    player2.update()
     player2.velocity.x = 0
-    //player2.update()
+     //Default to set for every frame
+     player2.setSprite('idle');
 
     //Player 2 animation- left,right movement 
     if (KEYS.ArrowLeft.pressed) {
-        player2.velocity.x = -MOVEMENT_SPEED
+        player2.velocity.x = -MOVEMENT_SPEED;
+        player2.setSprite('run');
     } else if (KEYS.ArrowRight.pressed) {
-        player2.velocity.x = MOVEMENT_SPEED
+        player2.velocity.x = MOVEMENT_SPEED;
+        player2.setSprite('run');
     }
+
+     //Player 2 Jump
+     if(player2.velocity.y < 0) {
+        player2.setSprite('jump');
+     } else if(player2.velocity.y>0) {
+         player2.setSprite('fall');
+     }
 
     //COllission detection - if player1 hit player2
     if (collissionDetection({ player1: player1, player2: player2 }) && player1.isAttacking) {
@@ -188,13 +233,16 @@ window.addEventListener('keydown', (event) => {
         //Player 2 controls
         // --- MOvement
         case 'ArrowUp':
+            player2.lastKey='ArrowUp'
             player2.velocity.y = JUMP_FORCE
             KEYS.ArrowUp.pressed = true
             break
         case 'ArrowRight':
+            player2.lastKey='ArrowRight'
             KEYS.ArrowRight.pressed = true
             break
         case 'ArrowLeft':
+            player2.lastKey='ArrowLeft'
             KEYS.ArrowLeft.pressed = true
             break
         // ---  Attack
@@ -202,17 +250,18 @@ window.addEventListener('keydown', (event) => {
             // KEYS.Shift.pressed = true
             player2.attack()
             break
-
-
         //player 1 controls
         case 'd':
+            player1.lastKey='d'
             KEYS.d.pressed = true
             break
         case 'w':
+            player1.lastKey='w'
             player1.velocity.y = JUMP_FORCE
             KEYS.w.pressed = true
             break
         case 'a':
+            player1.lastKey='a'
             KEYS.a.pressed = true
             break
         // ---  Attack

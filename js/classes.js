@@ -48,7 +48,7 @@ class Sprite {
 //Class representing a player
 class Player extends Sprite  {
     //Using properties in constructor
-    constructor({ position, velocity, color, imgSrc, scale=1, framesMax=1 , offset = {x:0,y:0}, sprites}) {
+    constructor({ position, velocity, color, imgSrc, scale=1, framesMax=1 , offset = {x:0,y:0}, sprites, attackArea = {offset: {}, width: undefined, height: undefined}}) {
         super({
             imgSrc,
             scale,
@@ -59,14 +59,14 @@ class Player extends Sprite  {
         this.velocity = velocity
         this.width = 50
         this.height = 150
-        this.attackBox = {
+        this.attackArea = {
             position: {
                 x: this.position.x,
                 y: this.position.y
             },
-            offset, //this is equivalent to offset=offset (same name)
-            width: 100,
-            height: 50
+            offset: attackArea.offset, //this is equivalent to offset=offset (same name)
+            width: attackArea.width,
+            height: attackArea.height
         }
         this.color = color
         this.isAttacking = false
@@ -76,6 +76,7 @@ class Player extends Sprite  {
         this.framesHold = 5
         this.sprites = sprites
         this.lastKey
+        this.isAlive = true
 
         console.log (this.sprites)
 
@@ -97,7 +98,7 @@ class Player extends Sprite  {
     //     if (this.isAttacking) {
     //         //draw atack box
     //         canvasContext.fillStyle = 'yellow'
-    //         canvasContext.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height);
+    //         canvasContext.fillRect(this.attackArea.position.x, this.attackArea.position.y, this.attackArea.width, this.attackArea.height);
     //     }
     // }
 
@@ -114,9 +115,15 @@ class Player extends Sprite  {
 
     update() {
         this.draw();
-        this.animateFrames();
-        this.attackBox.position.x = this.position.x + this.attackBox.offset.x
-        this.attackBox.position.y = this.position.y
+
+        if(this.isAlive)
+         this.animateFrames();
+
+        //Attack areas
+        this.attackArea.position.x = this.position.x + this.attackArea.offset.x
+        this.attackArea.position.y = this.position.y + this.attackArea.offset.y
+        //visualizing attack area using a rect
+        //canvasContext.fillRect(this.attackArea.position.x, this.attackArea.position.y, this.attackArea.width, this.attackArea.height)
 
         //Movement
         this.position.x += this.velocity.x
@@ -125,12 +132,12 @@ class Player extends Sprite  {
         //Application of gravity
         if (this.position.y + this.height + this.velocity.y >= canvas.height-33) { //33 is the height of the ground
             this.velocity.y = 0; //Player is on the ground
-            this.position.y=339
+            this.position.y=393 //Exact ground resting location(to remove flashing when landing)
         } else {
             this.velocity.y += GRAVITY //adds accelaration as the player moves down
         }
 
-        console.log('y='+this.position.y);
+        console.log('y='+this.position.y + "x=" + this.position.x);
     }
 
     attack() {
@@ -144,9 +151,26 @@ class Player extends Sprite  {
     //Change the sprite to a certain state
     //The if statements make sure the sprite state is switched only once (despite being repeatedly called in animate())
     setSprite(sprite) {
+ //The same as above in case of ded
+ if(this.image === this.sprites.death.image ) {
+
+    if(this.image === this.sprites.death.image && this.framesCurrent == this.sprites.death.framesMax-1) {
+        this.isAlive=false;
+    }
+    return
+}
+
+        //No other animation can take place during attack animation
         if(this.image === this.sprites.attack.image && this.framesCurrent < this.sprites.attack.framesMax-1) {
             return
         }
+
+        //The same as above in case of getting hit
+        if(this.image === this.sprites.getHit.image && this.framesCurrent < this.sprites.getHit.framesMax-1) {
+            return
+        }
+
+       
 
       switch (sprite) {
             case 'idle':
@@ -183,6 +207,22 @@ class Player extends Sprite  {
                 
                 this.image = this.sprites.attack.image
                 this.framesMax = this.sprites.attack.framesMax
+                this.framesCurrent=0;
+            }
+            break;
+            case 'getHit' : 
+            if (this.image != this.sprites.getHit.image) {
+                
+                this.image = this.sprites.getHit.image
+                this.framesMax = this.sprites.getHit.framesMax
+                this.framesCurrent=0;
+            }
+            break;
+            case 'death' : 
+            if (this.image != this.sprites.death.image) {
+                
+                this.image = this.sprites.death.image
+                this.framesMax = this.sprites.death.framesMax
                 this.framesCurrent=0;
             }
             break;

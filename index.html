@@ -5,32 +5,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Woodland Warriors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="./imgs/favicon.png">
 </head>
 
 <body>
-    <div id="mainDiv">
-        <div id="topBar">
-            <!--Player1 health bar -->
-            <div class="playerHealthContainer" >
-                <div id="player1health" class="playerHealth"></div>
-                <div class="playerHealthBg"></div>
+    <div id="outermost">
+        <div class="textBox"> <h1>Woodland Warriors</h1> </div>
+        <div id="mainDiv">
+            <div id="topBar">
+                <!--Player1 health bar -->
+                <div class="playerHealthContainer">
+                    <div id="player1health" class="playerHealth"></div>
+                    <div class="playerHealthBg"></div>
+                </div>
+                <!--Game timer-->
+                <div id="timer">
+                    10
+                </div>
+                <!--Player2 health bar-->
+                <div id="player2healthcontainer" class="playerHealthContainer">
+                    <div id="player2health" class="playerHealth"></div>
+                    <div class="playerHealthBg"></div>
+                </div>
             </div>
-            <!--Game timer-->
-            <div id="timer">
-                10
-            </div>
-            <!--Player2 health bar-->
-            <div id="player2healthcontainer" class="playerHealthContainer" >
-                <div id="player2health" class="playerHealth"></div>
-                <div class="playerHealthBg"></div>
-            </div>
+            <div id="scoreInfo"></div>
+            <canvas id="canvas"></canvas>
         </div>
-        <div id="scoreInfo"></div>
-        <canvas id="canvas"></canvas>
+        <div class="textBox"> <p>Player 1: A,W,D - Shift to Attack &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;Player 2: Left,Right,Up - Space to Attack</p></div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
+        integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="js/util.js"></script>
-    <script src="js/classes.js" ></script>
+    <script src="js/classes.js"></script>
     <script src="script.js" defer></script>
 </body>
 

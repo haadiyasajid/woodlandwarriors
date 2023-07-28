@@ -1,5 +1,28 @@
 * {
     box-sizing: border-box;
+    font-family: 'Syne Mono', monospace;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    background-color: #556678;
+}
+
+#outermost {
+    display: inline-block;
+}
+
+.textBox {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    top:0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    justify-content: center;
 }
 
 #mainDiv {
@@ -25,6 +48,7 @@
     bottom: 0;
     right: 0;
     left: 0;
+    font-size: 40px;
 }
 
 .playerHealth {
@@ -34,38 +58,50 @@
     top:0;
     right: 0;
     bottom: 0;
+    border-radius: 10px;
+    
 }
 
 .playerHealthContainer {
     position: relative;
     align-items: flex-end;
-    height: 30px;
-    width: 100%
+    width: 100%;
+    border: 1px solid white;
+    border-radius: 10px;
+    
 }
 
 .playerHealthBg {
     background-color:darkgray;
     height: 30px;
     width: 100%;
+    background-image: url("./imgs/healthbar_bg.png");
+    border-radius: 10px;
 }
 
 #player1health {
-    background-color: chocolate;
+    background-color: #466734;
     left:0;
 }
 
 #timer {
-    background-color: aquamarine;
+    background-color: #556678;
     height: 50px;
     width: 50px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 45%;
+    margin-left: 10px;
+    margin-right: 10px;
+    color:aliceblue;
+    border: 2px solid white;
+    text-shadow: darkgrey;
 }
 
 #player2health {
-    background-color: darkmagenta;
+    background-color: #4f8868;
     width: 100%;
 }
 

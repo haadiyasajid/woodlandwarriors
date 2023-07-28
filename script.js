@@ -7,6 +7,10 @@ const JUMP_FORCE = -15
 const GAME_WIDTH = 1024
 const GAME_HEIGHT = 576
 const MOVEMENT_SPEED = 5
+const ATTACK_DAMAGE = 10; //Amount of damage an attack will cause
+const HEALTH_WARNING = 20; //Amout of health upon which bar turns red
+
+
 const KEYS = {
     ArrowLeft: {
         pressed: false
@@ -33,9 +37,9 @@ const KEYS = {
 }
 
 
-const bg = new Sprite( {
+const bg = new Sprite({
     position: {
-        x:0, y:0
+        x: 0, y: 0
     },
     imgSrc: './imgs/background.png'
 })
@@ -48,7 +52,7 @@ canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 //Player 1 will be controlled by A,W,D
 const player1 = new Player(
     {
-        position: new Position(0, 0),
+        position: new Position(35, 0),
         velocity: { x: 0, y: 5 }, //initial falling down velocity, will be reset when hitting ground
         color: 'red',
         offset: {
@@ -56,35 +60,51 @@ const player1 = new Player(
             y: 0
         },
         imgSrc: './imgs/Huntress_1/Sprites/Idle.png',
-        framesMax:8,
+        framesMax: 8,
         scale: 2.5,
         offset: {
-            x:100,
-            y:87
+            x: 100,
+            y: 87
         },
         sprites: {
             idle: {
                 spriteSrc: './imgs/Huntress_1/Sprites/Idle.png',
-                framesMax:8,
+                framesMax: 8,
             },
             run: {
                 spriteSrc: './imgs/Huntress_1/Sprites/Run.png',
-                framesMax:8,
+                framesMax: 8,
 
             },
             jump: {
                 spriteSrc: './imgs/Huntress_1/Sprites/Jump.png',
-                framesMax:2,
+                framesMax: 2,
 
             },
             fall: {
                 spriteSrc: './imgs/Huntress_1/Sprites/Fall.png',
-                framesMax:2
+                framesMax: 2
             },
             attack: {
                 spriteSrc: './imgs/Huntress_1/Sprites/Attack1.png',
-                framesMax:5
+                framesMax: 5
+            },
+            getHit: {
+                spriteSrc: './imgs/Huntress_1/Sprites/Take hit.png',
+                framesMax: 3
+            },
+            death: {
+                spriteSrc: './imgs/Huntress_1/Sprites/Death.png',
+                framesMax: 8
             }
+        },
+        attackArea: {
+            offset: {
+                x: 110,
+                y: 60
+            },
+            width: 100,
+            height: 70
         }
     }
 );
@@ -92,43 +112,59 @@ const player1 = new Player(
 //Player 2 will be controlled by ArrowUp, ArrowLeft, ArrowRight
 const player2 = new Player(
     {
-        position: new Position(400, 0),
-        velocity: { x: 0, y: 20 },
+        position: new Position(890, 0),
+        velocity: { x: 0, y: 5 }, //Initial velocity for falling down
         color: 'blue',
         offset: {
             x: -50,
             y: 0
         },
         imgSrc: './imgs/Huntress_2/Sprites/Idle.png',
-        framesMax:10,
+        framesMax: 10,
         scale: 2.5,
         offset: {
-            x:100,
-            y:12
-       },
+            x: 100,
+            y: 12
+        },
         sprites: {
             idle: {
                 spriteSrc: './imgs/Huntress_2/Sprites/Idle.png',
-                framesMax:10
+                framesMax: 10
             },
             run: {
                 spriteSrc: './imgs/Huntress_2/Sprites/Run.png',
-                framesMax:8
+                framesMax: 8
 
             },
             jump: {
                 spriteSrc: './imgs/Huntress_2/Sprites/Jump.png',
-                framesMax:2
+                framesMax: 2
 
             },
             fall: {
                 spriteSrc: './imgs/Huntress_2/Sprites/Fall.png',
-                framesMax:2
+                framesMax: 2
             },
             attack: {
                 spriteSrc: './imgs/Huntress_2/Sprites/Attack.png',
-                framesMax:6
+                framesMax: 6
+            },
+            getHit: {
+                spriteSrc: './imgs/Huntress_2/Sprites/Get Hit.png',
+                framesMax: 3
+            },
+            death: {
+                spriteSrc: './imgs/Huntress_2/Sprites/Death.png',
+                framesMax: 10
             }
+        },
+        attackArea: {
+            offset: {
+                x: -120,
+                y: 60
+            },
+            width: 100,
+            height: 50
         }
     }
 );
@@ -139,84 +175,140 @@ player2.draw();
 let timerID
 let timer = 60
 
+function playerInBoundsForLeft(player) {
+    if(player.position.x < -20 ) {
+        return false;
+    } else {
+        return true;
+    }
+}
 
+function playerInBoundsForRight(player) {
+    if(player.position.x > 870) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function playerInBoundsForJump(player) {
+    if(player.position.y < 0) {
+        return false;
+    } else {
+        return true;
+    }
+}
 
 countDown();
 
 function animate() {
 
-    //       -----Background------
+    //An infinite loop
     window.requestAnimationFrame(animate)
+
+    //       -----Background------
     canvasContext.fillStyle = 'black'
     canvasContext.fillRect(0, 0, canvas.width, canvas.height)
     bg.update();
-
     
-     //       -----Player 1------
+    //Making the background slightly lighter for better contrast
+    canvasContext.fillStyle = 'rgba(255,255,255,0.11)'
+    canvasContext.fillRect(0,0,canvas.width, canvas.height-32)
+
+
+    //       -----Player 1------
     player1.update();
     player1.velocity.x = 0
 
     //Player 1 animation -left,right movement
-    if (KEYS.a.pressed && player1.lastKey=='a') {
+    if (KEYS.a.pressed && player1.lastKey == 'a' && playerInBoundsForLeft(player1)) {
         player1.velocity.x = -MOVEMENT_SPEED
         player1.setSprite('run');
         //player1.image.src = './imgs/Huntress_1/Sprites/Run.png';
 
-    } else if (KEYS.d.pressed && player1.lastKey=='d') {
+    } else if (KEYS.d.pressed && player1.lastKey == 'd' && playerInBoundsForRight(player1)) {
         player1.velocity.x = MOVEMENT_SPEED
-        player1.setSprite('run');   
+        player1.setSprite('run');
     } else {
-    //Default to set for every frame
-    player1.setSprite('idle');
+        //Default to set for every frame
+        player1.setSprite('idle');
     }
     //Player 1 Jump
-    if(player1.velocity.y < 0) {
-       player1.setSprite('jump');
-    } else if(player1.velocity.y>0) {
+    if (player1.velocity.y < 0) {
+        player1.setSprite('jump');
+    } else if (player1.velocity.y > 0) {
         player1.setSprite('fall');
     }
 
-     //       -----Player 2-----
+    //       -----Player 2-----
     player2.update()
     player2.velocity.x = 0
-   
+
     //Player 2 animation- left,right movement 
-    if (KEYS.ArrowLeft.pressed && player2.lastKey == 'ArrowLeft') {
+    if (KEYS.ArrowLeft.pressed && player2.lastKey == 'ArrowLeft' && playerInBoundsForLeft(player2)) {
         player2.velocity.x = -MOVEMENT_SPEED;
         player2.setSprite('run');
-    } else if (KEYS.ArrowRight.pressed && player2.lastKey == 'ArrowRight') {
+    } else if (KEYS.ArrowRight.pressed && player2.lastKey == 'ArrowRight'  && playerInBoundsForRight(player2)) {
         player2.velocity.x = MOVEMENT_SPEED;
         player2.setSprite('run');
     } else {
-          //Default to set for every frame
-     player2.setSprite('idle');
+        //Default to set for every frame
+        player2.setSprite('idle');
     }
 
-     //Player 2 Jump
-     if(player2.velocity.y < 0) {
+    //Player 2 Jump
+    if (player2.velocity.y < 0) {
         player2.setSprite('jump');
-     } else if(player2.velocity.y>0) {
-         player2.setSprite('fall');
-     }
+    } else if (player2.velocity.y > 0) {
+        player2.setSprite('fall');
+    }
 
     //COllission detection - if player1 hit player2
     if (collissionDetection({ player1: player1, player2: player2 }) && player1.isAttacking) {
         console.log("HIT PLAYER 2!!!");
-        player2.health -= 20
-        document.getElementById('player2health').style.width = player2.health + '%'
+
+        //player2.setSprite('getHit');
+
+        player2.health -= ATTACK_DAMAGE;
+        if (player2.health <= 0) {
+            player2.setSprite('death');
+        } else { //still alive
+            player2.setSprite('getHit');
+            if(player2.health<=20) {
+                document.getElementById("player2health").style.backgroundColor = "#85231c";
+            }
+        }
+
+        //document.getElementById('player2health').style.width = player2.health + '%'
+        gsap.to('#player2health', {
+            width: player2.health + '%'
+        })
         player1.isAttacking = false;
     }
 
     //Collission detection - if player2 hit player2
     if (collissionDetection({ player1: player2, player2: player1 }) && player2.isAttacking) {
         console.log("HIT PLAYER 1!!!");
-        player1.health -= 20
-        document.getElementById('player1health').style.width = player1.health + '%'
+
+        player1.health -= ATTACK_DAMAGE
+        if (player1.health <= 0) {
+            player1.setSprite('death');
+        } else { //health >0
+            player1.setSprite('getHit');
+            if(player1.health<=20) {
+                document.getElementById("player1health").style.backgroundColor = "#85231c";
+            }
+        }
+
+        //document.getElementById('player1health').style.width = player1.health + '%'
+        gsap.to('#player1health', {
+            width: player1.health + '%'
+        })
         player2.isAttacking = false;
     }
 
     //If health finishes 
-    if(player1.health<=0 || player2.health<=0 ) {
+    if (player1.health <= 0 || player2.health <= 0) {
         setWinner({
             player1: player1,
             player2: player2,
@@ -229,46 +321,55 @@ function animate() {
 animate();
 
 window.addEventListener('keydown', (event) => {
-    switch (event.key) {
-        //Player 2 controls
-        // --- MOvement
-        case 'ArrowUp':
-            player2.lastKey='ArrowUp'
-            player2.velocity.y = JUMP_FORCE
-            KEYS.ArrowUp.pressed = true
-            break
-        case 'ArrowRight':
-            player2.lastKey='ArrowRight'
-            KEYS.ArrowRight.pressed = true
-            break
-        case 'ArrowLeft':
-            player2.lastKey='ArrowLeft'
-            KEYS.ArrowLeft.pressed = true
-            break
-        // ---  Attack
-        case ' ':
-            // KEYS.Shift.pressed = true
-            player2.attack()
-            break
-        //player 1 controls
-        case 'd':
-            player1.lastKey='d'
-            KEYS.d.pressed = true
-            break
-        case 'w':
-            player1.lastKey='w'
-            player1.velocity.y = JUMP_FORCE
-            KEYS.w.pressed = true
-            break
-        case 'a':
-            player1.lastKey='a'
-            KEYS.a.pressed = true
-            break
-        // ---  Attack
-        case 'Shift':
-            KEYS.Shift.pressed = true
-            player1.attack()
-            break
+    if (player2.isAlive) {
+        switch (event.key) {
+            //Player 2 controls
+            // --- MOvement
+            case 'ArrowUp':
+                player2.lastKey = 'ArrowUp'
+                if(playerInBoundsForJump(player2))
+                     player2.velocity.y = JUMP_FORCE
+                KEYS.ArrowUp.pressed = true
+                break
+            case 'ArrowRight':
+                player2.lastKey = 'ArrowRight'
+                KEYS.ArrowRight.pressed = true
+                break
+            case 'ArrowLeft':
+                player2.lastKey = 'ArrowLeft'
+                KEYS.ArrowLeft.pressed = true
+                break
+            // ---  Attack
+            case ' ':
+                // KEYS.Shift.pressed = true
+                player2.attack()
+                break
+        }
+    }
+
+    if (player1.isAlive) {
+        switch (event.key) {
+            //player 1 controls
+            case 'd':
+                player1.lastKey = 'd'
+                KEYS.d.pressed = true
+                break
+            case 'w':
+                player1.lastKey = 'w'
+                if(playerInBoundsForJump(player1))
+                    player1.velocity.y = JUMP_FORCE
+                KEYS.w.pressed = true
+                break
+            case 'a':
+                player1.lastKey = 'a'
+                KEYS.a.pressed = true
+                break
+            // ---  Attack
+            case 'Shift':
+                KEYS.Shift.pressed = true
+                player1.attack()
+                break
+        }
     }
 })
 

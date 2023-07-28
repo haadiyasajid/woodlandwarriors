@@ -74,8 +74,8 @@ class Player extends Sprite  {
         this.framesCurrent = 0
         this.framesElapsed = 0
         this.framesHold = 5
-        this.lastKey
         this.sprites = sprites
+        this.lastKey
 
         console.log (this.sprites)
 

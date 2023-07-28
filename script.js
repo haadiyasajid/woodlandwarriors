@@ -109,16 +109,16 @@ const player2 = new Player(
         sprites: {
             idle: {
                 spriteSrc: './imgs/Huntress_2/Sprites/Idle.png',
-                framesMax:10,
+                framesMax:10
             },
             run: {
                 spriteSrc: './imgs/Huntress_2/Sprites/Run.png',
-                framesMax:8,
+                framesMax:8
 
             },
             jump: {
                 spriteSrc: './imgs/Huntress_2/Sprites/Jump.png',
-                framesMax:2,
+                framesMax:2
 
             },
             fall: {
@@ -156,19 +156,18 @@ function animate() {
     player1.update();
     player1.velocity.x = 0
 
-    //Default to set for every frame
-    player1.setSprite('idle');
-
     //Player 1 animation -left,right movement
-    if (KEYS.a.pressed) {
+    if (KEYS.a.pressed && player1.lastKey=='a') {
         player1.velocity.x = -MOVEMENT_SPEED
         player1.setSprite('run');
         //player1.image.src = './imgs/Huntress_1/Sprites/Run.png';
 
-    } else if (KEYS.d.pressed) {
+    } else if (KEYS.d.pressed && player1.lastKey=='d') {
         player1.velocity.x = MOVEMENT_SPEED
-        player1.setSprite('run');
-        
+        player1.setSprite('run');   
+    } else {
+    //Default to set for every frame
+    player1.setSprite('idle');
     }
     //Player 1 Jump
     if(player1.velocity.y < 0) {
@@ -180,16 +179,17 @@ function animate() {
      //       -----Player 2-----
     player2.update()
     player2.velocity.x = 0
-     //Default to set for every frame
-     player2.setSprite('idle');
-
+   
     //Player 2 animation- left,right movement 
-    if (KEYS.ArrowLeft.pressed) {
+    if (KEYS.ArrowLeft.pressed && player2.lastKey == 'ArrowLeft') {
         player2.velocity.x = -MOVEMENT_SPEED;
         player2.setSprite('run');
-    } else if (KEYS.ArrowRight.pressed) {
+    } else if (KEYS.ArrowRight.pressed && player2.lastKey == 'ArrowRight') {
         player2.velocity.x = MOVEMENT_SPEED;
         player2.setSprite('run');
+    } else {
+          //Default to set for every frame
+     player2.setSprite('idle');
     }
 
      //Player 2 Jump

@@ -51,9 +51,15 @@ class Sprite {
         }
     }
 
-    fireLeft() {
-       
+    moveLeft() {
         this.position.x -= 3;
+        this.update();
+    }
+
+    //set a sprite at the location of a player with some offset
+    setAt( {player, offset = { x: 0, y: 0 } }) {
+        this.position.x = player.position.x + offset.x;
+        this.position.y = player.position.y + offset.y
     }
 
 

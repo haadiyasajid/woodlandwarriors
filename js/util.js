@@ -77,7 +77,7 @@ function playerInBoundsForLeft(player) {
 }
 
 function playerInBoundsForRight(player) {
-    if(player.position.x > 870) {
+    if(player.position.x > 880) {
         return false;
     } else {
         return true;

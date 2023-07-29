@@ -6,21 +6,23 @@ class Position {
     }
 }
 
+const ANIMATION_SPEED=5; //Larger value = slower animation
+
 
 //Class representing a sprite torender an image
 class Sprite {
     //Using properties in constructor
-    constructor({ position, imgSrc, scale=1, framesMax=1, offset = {x:0, y:0} }) {
+    constructor({ position, imgSrc, scale = 1, framesMax = 1, offset = { x: 0, y: 0 } , width=50, height=150}) {
         this.position = position
-        this.width = 50
-        this.height = 150
-        this.image= new Image()
-        this.image.src= imgSrc
-        this.scale=scale
-        this.framesMax= framesMax
+        // this.width = 50
+        // this.height = 150
+        this.image = new Image()
+        this.image.src = imgSrc
+        this.scale = scale
+        this.framesMax = framesMax
         this.framesCurrent = 0
         this.framesElapsed = 0
-        this.framesHold = 5
+        this.framesHold = ANIMATION_SPEED; 
         this.offset = offset
     }
 
@@ -38,17 +40,29 @@ class Sprite {
     }
 
     update() {
-        //REWATCH SHOP ANIMATION PART OR 2:24:44 FOR THIS
         this.draw()
+        this.framesElapsed++; //this only increases over time
+        if (this.framesElapsed % this.framesHold === 0) { //move to the next crop mark after 'n' frames (n=framesHold)
+            if (this.framesCurrent < (this.framesMax - 1)) {
+                this.framesCurrent++;
+            } else {
+                this.framesCurrent = 0;
+            }
+        }
     }
 
- 
+    fireLeft() {
+       
+        this.position.x -= 3;
+    }
+
+
 }
 
 //Class representing a player
-class Player extends Sprite  {
+class Player extends Sprite {
     //Using properties in constructor
-    constructor({ position, velocity, color, imgSrc, scale=1, framesMax=1 , offset = {x:0,y:0}, sprites, attackArea = {offset: {}, width: undefined, height: undefined}}) {
+    constructor({ position, velocity, color, imgSrc, scale = 1, framesMax = 1, offset = { x: 0, y: 0 }, sprites, attackArea = { offset: {}, width: undefined, height: undefined } }) {
         super({
             imgSrc,
             scale,
@@ -77,17 +91,19 @@ class Player extends Sprite  {
         this.sprites = sprites
         this.lastKey
         this.isAlive = true
+        this.firing = false
+        this.arrow 
 
-        console.log (this.sprites)
+        console.log(this.sprites)
 
         //const sprite refers to the key of each object (like a for-each loop)
         //sprite=idle, run, attack, etc
-        for(const sprite in this.sprites) {
-            this.sprites[sprite].image= new Image() //adding a new image property
+        for (const sprite in this.sprites) {
+            this.sprites[sprite].image = new Image() //adding a new image property
             this.sprites[sprite].image.src = this.sprites[sprite].spriteSrc //Taking it form the sprites respective property
         }
 
-       // console.log(this.sprites);
+        // console.log(this.sprites);
 
     }
 
@@ -104,11 +120,11 @@ class Player extends Sprite  {
 
     animateFrames() {
         this.framesElapsed++;
-        if(this.framesElapsed % this.framesHold === 0 ) {
-            if(this.framesCurrent < (this.framesMax-1)) {
+        if (this.framesElapsed % this.framesHold === 0) {
+            if (this.framesCurrent < (this.framesMax - 1)) {
                 this.framesCurrent++;
             } else {
-                this.framesCurrent=0;
+                this.framesCurrent = 0;
             }
         }
     }
@@ -116,8 +132,8 @@ class Player extends Sprite  {
     update() {
         this.draw();
 
-        if(this.isAlive)
-         this.animateFrames();
+        if (this.isAlive)
+            this.animateFrames();
 
         //Attack areas
         this.attackArea.position.x = this.position.x + this.attackArea.offset.x
@@ -130,14 +146,14 @@ class Player extends Sprite  {
         this.position.y += this.velocity.y
 
         //Application of gravity
-        if (this.position.y + this.height + this.velocity.y >= canvas.height-33) { //33 is the height of the ground
+        if (this.position.y + this.height + this.velocity.y >= canvas.height - 33) { //33 is the height of the ground
             this.velocity.y = 0; //Player is on the ground
-            this.position.y=393 //Exact ground resting location(to remove flashing when landing)
+            this.position.y = 393 //Exact ground resting location(to remove flashing when landing)
         } else {
             this.velocity.y += GRAVITY //adds accelaration as the player moves down
         }
 
-        console.log('y='+this.position.y + "x=" + this.position.x);
+       // console.log('y=' + this.position.y + "x=" + this.position.x);
     }
 
     attack() {
@@ -148,84 +164,108 @@ class Player extends Sprite  {
         }, 100)
     }
 
+    drawArrow() {
+        this.arrow = new Sprite ({
+            position: {
+                x: this.position.x -10, 
+                y: this.position.y +5
+            },
+            imgSrc: './imgs/Huntress_2/Sprites/Arrow/Moving.png'
+        })
+
+        this.arrow.draw();
+    }
+
+    fireArrow() { //update method to be called in animation loop
+        this.arrow.update();
+        this.firing = true;
+        while(this.firing) {
+            this.arrow.position.x -= 5;
+        }
+        setTimeout(() => {
+            this.firing = false;
+        }, 3000)
+        if(!this.firing) {
+
+        }
+    }
+
     //Change the sprite to a certain state
     //The if statements make sure the sprite state is switched only once (despite being repeatedly called in animate())
     setSprite(sprite) {
- //The same as above in case of ded
- if(this.image === this.sprites.death.image ) {
-
-    if(this.image === this.sprites.death.image && this.framesCurrent == this.sprites.death.framesMax-1) {
-        this.isAlive=false;
-    }
-    return
-}
+        // in case of ded
+        if (this.image === this.sprites.death.image) {
+            if (this.image === this.sprites.death.image && this.framesCurrent == this.sprites.death.framesMax - 1) {
+                this.isAlive = false;
+            }
+            return
+        }
 
         //No other animation can take place during attack animation
-        if(this.image === this.sprites.attack.image && this.framesCurrent < this.sprites.attack.framesMax-1) {
+        if (this.image === this.sprites.attack.image && this.framesCurrent < this.sprites.attack.framesMax - 1) {
             return
         }
 
         //The same as above in case of getting hit
-        if(this.image === this.sprites.getHit.image && this.framesCurrent < this.sprites.getHit.framesMax-1) {
+        if (this.image === this.sprites.getHit.image && this.framesCurrent < this.sprites.getHit.framesMax - 1) {
             return
         }
 
-       
 
-      switch (sprite) {
+
+        switch (sprite) {
             case 'idle':
                 if (this.image !== this.sprites.idle.image) {
                     this.image = this.sprites.idle.image
                     this.framesMax = this.sprites.idle.framesMax
-                    this.framesCurrent=0;   //Reset current frame to 0, to remove flashes when switching between positions/sprites
+                    this.framesCurrent = 0;   //Reset current frame to 0, to remove flashes when switching between positions/sprites
                 }
                 break;
             case 'run':
                 if (this.image != this.sprites.run.image) {
                     this.image = this.sprites.run.image
                     this.framesMax = this.sprites.run.framesMax
-                    this.framesCurrent=0;
+                    this.framesCurrent = 0;
                 }
                 break;
             case 'jump':
                 if (this.image != this.sprites.jump.image) {
                     this.image = this.sprites.jump.image
                     this.framesMax = this.sprites.jump.framesMax
-                    this.framesCurrent=0;
+                    this.framesCurrent = 0;
                 }
                 break;
-            case 'fall' : 
-            if (this.image != this.sprites.fall.image) {
-                
-                this.image = this.sprites.fall.image
-                this.framesMax = this.sprites.fall.framesMax
-                this.framesCurrent=0;
-            }
-            break;
-            case 'attack' : 
-            if (this.image != this.sprites.attack.image) {
-                
-                this.image = this.sprites.attack.image
-                this.framesMax = this.sprites.attack.framesMax
-                this.framesCurrent=0;
-            }
-            break;
-            case 'getHit' : 
-            if (this.image != this.sprites.getHit.image) {
-                
-                this.image = this.sprites.getHit.image
-                this.framesMax = this.sprites.getHit.framesMax
-                this.framesCurrent=0;
-            }
-            break;
-            case 'death' : 
-            if (this.image != this.sprites.death.image) {
-                
-                this.image = this.sprites.death.image
-                this.framesMax = this.sprites.death.framesMax
-                this.framesCurrent=0;
-            }
-            break;
+            case 'fall':
+                if (this.image != this.sprites.fall.image) {
+                    this.image = this.sprites.fall.image
+                    this.framesMax = this.sprites.fall.framesMax
+                    this.framesCurrent = 0;
+                }
+                break;
+            case 'attack':
+                if (this.image != this.sprites.attack.image) {
+
+                    this.image = this.sprites.attack.image
+                    this.framesMax = this.sprites.attack.framesMax
+                    this.framesCurrent = 0;
+                }
+                break;
+            case 'getHit':
+                if (this.image != this.sprites.getHit.image) {
+
+                    this.image = this.sprites.getHit.image
+                    this.framesMax = this.sprites.getHit.framesMax
+                    this.framesCurrent = 0;
+                }
+                break;
+            case 'death':
+                if (this.image != this.sprites.death.image) {
+
+                    this.image = this.sprites.death.image
+                    this.framesMax = this.sprites.death.framesMax
+                    this.framesCurrent = 0;
+                }
+                break;
         }
     }
 }

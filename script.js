@@ -337,8 +337,8 @@ const player1 = new Player(
                 x: 110,
                 y: 60
             },
-            width: 130,
-            height: 70
+            width: 120,
+            height: 80
         }
     }
 );
@@ -394,10 +394,10 @@ const player2 = new Player(
         },
         attackArea: {
             offset: {
-                x: -120,
+                x: -170,
                 y: 60
             },
-            width: 140,
+            width: 180,
             height: 50
         }
     }

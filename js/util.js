@@ -51,22 +51,27 @@ function setWinner({player1, player2, timerId}) {
 }
 
 //Countdown the timer
+let timerId;
+//Countdown the timer
 function countDown() {
     if (timer > 0) {
         timerId = setTimeout(countDown, 1000)
         timer--;
         document.getElementById('timer').innerHTML = timer;
     }
-
     else {
         setWinner({
             player1:player1,
             player2:player2,
             timerId
         });
+      
     }
 }
-
+function clearCountDown()
+{
+    clearTimeout(timerId)
+}
 
 function playerInBoundsForLeft(player) {
     if(player.position.x < -20 ) {

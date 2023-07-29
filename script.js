@@ -18,12 +18,13 @@ const ARROW_SHOOT_TIME = 3000 //Number of milliseconds for which arrow remains a
 
 //---------------------Audios---------------------
 var audio = new Audio('audio/LostWoods_Mikel.mp3');
-audio.volume = 0.01;
+audio.volume = 0.03;
 audio.play();
 
 var getHeart = new Audio('audio/zelda_get_heart.mp3');
 var getHit = new Audio('audio/zelda_hit.mp3');
-
+var drawSword = new Audio('audio/zelda_sword_draw.mp3');
+var fireArrow = new Audio('audio/arrow_fire.mp3');
 
 //---------------------Key Controls---------------------
 const KEYS = {
@@ -111,6 +112,7 @@ const arrow = new Sprite({
 })
 
 function restart() {
+    audio.play();
     document.getElementById("scoreInfo").style.display = 'none';
     gameOver = false;
     framesCount=0; //resetting so bottle doesn't appear too early
@@ -139,6 +141,7 @@ function restart() {
     player2.position.x = 890;
     timer = 60;
     document.getElementById('timer').innerHTML = timer;
+    clearCountDown();
     countDown();
     player1.draw();
     player2.draw();
@@ -315,6 +318,7 @@ function animate() {
     }
 
     if (player2.firing) {
+        //Arrow will only be set at position for one frame, at the exact second when arrow leaves.
         if (!FIRED && player2.framesCurrent == 4) {
             arrow.setAt({ player: player2, offset: { x: -95, y: 80 } });
             FIRED = true;
@@ -324,6 +328,7 @@ function animate() {
         
         if (detectArrowCollission()) {
                 player2.firing=false;
+                FIRED=false;
                 console.log("HIT PLAYER 1!!!");
                 getHit.play();
         
@@ -504,6 +509,7 @@ player2.draw();
 let timerID
 let timer = 60
 
+clearCountDown();
 countDown();
 
 
@@ -532,7 +538,8 @@ window.addEventListener('keydown', (event) => {
             case ' ':
                 // KEYS.Shift.pressed = true
                 if (!player2.firing) {
-                    player2.attack()
+                    player2.attack();
+                    fireArrow.play();
                     player2.firing = true;
                     setTimeout(() => {
                         player2.firing = false;
@@ -566,7 +573,8 @@ window.addEventListener('keydown', (event) => {
             // ---  Attack
             case 'Shift':
                 KEYS.Shift.pressed = true
-                player1.attack()
+                player1.attack();
+                drawSword.play();
                 break
         }
     }

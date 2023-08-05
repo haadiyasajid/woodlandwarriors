@@ -15,10 +15,11 @@ I made this game just to practice and learn JavaScript! Contributions are very w
 # CREDITS
 ### Audio:
 * Background audio: Lost Woods Lofi Remix by Mikel (GameChops)
-* Get Item and Get Hit sounds: The Legend Of Zelda (Nintedo)
+* Get Item, Game Over (death), and Get Hit sounds: The Legend Of Zelda (Nintedo)
+* Sword slash and arrow fire sounds: Zedge
     
 ### Sprites:
-* Background sprite: edermunizz via itch.io
+* Background forest sprite: edermunizz via itch.io
 * Player sprites: LuizMelo via itch.io
 * Health potion bottle sprite: LornENT via itch.io
     

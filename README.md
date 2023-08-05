@@ -11,7 +11,7 @@ CREDITS
 -------
 Audio:
     Background audio: Lost Woods Lofi Remix by Mikel (GameChops)
-    Get Item and Get Hit sounds: The Legend Of Zelda (Nintedo)
+    Get Item, Draw Sword, Game Over and Get Hit sounds: The Legend Of Zelda (Nintedo - Koji Kondo)
 Sprites:
     Background sprite: edermunizz via itch.io
     Player sprites: LuizMelo via itch.io

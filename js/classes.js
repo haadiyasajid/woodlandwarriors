@@ -6,13 +6,13 @@ class Position {
     }
 }
 
-const ANIMATION_SPEED=5; //Larger value = slower animation
+const ANIMATION_SPEED = 5; //Larger value = slower animation
 
 
 //Class representing a sprite torender an image
 class Sprite {
     //Using properties in constructor
-    constructor({ position, imgSrc, scale = 1, framesMax = 1, offset = { x: 0, y: 0 } , width=50, height=150}) {
+    constructor({ position, imgSrc, scale = 1, framesMax = 1, offset = { x: 0, y: 0 }, width = 50, height = 150 }) {
         this.position = position
         // this.width = 50
         // this.height = 150
@@ -22,7 +22,7 @@ class Sprite {
         this.framesMax = framesMax
         this.framesCurrent = 0
         this.framesElapsed = 0
-        this.framesHold = ANIMATION_SPEED; 
+        this.framesHold = ANIMATION_SPEED;
         this.offset = offset
     }
 
@@ -52,12 +52,12 @@ class Sprite {
     }
 
     moveLeft() {
-        this.position.x -= 3;
+        this.position.x -= ARROW_SPEED;
         this.update();
     }
 
     //set a sprite at the location of a player with some offset
-    setAt( {player, offset = { x: 0, y: 0 } }) {
+    setAt({ player, offset = { x: 0, y: 0 } }) {
         this.position.x = player.position.x + offset.x;
         this.position.y = player.position.y + offset.y
     }
@@ -98,7 +98,7 @@ class Player extends Sprite {
         this.lastKey
         this.isAlive = true
         this.firing = false
-        this.arrow 
+        this.arrow
 
         console.log(this.sprites)
 
@@ -159,7 +159,7 @@ class Player extends Sprite {
             this.velocity.y += GRAVITY //adds accelaration as the player moves down
         }
 
-       // console.log('y=' + this.position.y + "x=" + this.position.x);
+        // console.log('y=' + this.position.y + "x=" + this.position.x);
     }
 
     attack() {
@@ -171,10 +171,10 @@ class Player extends Sprite {
     }
 
     drawArrow() {
-        this.arrow = new Sprite ({
+        this.arrow = new Sprite({
             position: {
-                x: this.position.x -10, 
-                y: this.position.y +5
+                x: this.position.x - 10,
+                y: this.position.y + 5
             },
             imgSrc: './imgs/Huntress_2/Sprites/Arrow/Moving.png'
         })
@@ -185,13 +185,13 @@ class Player extends Sprite {
     fireArrow() { //update method to be called in animation loop
         this.arrow.update();
         this.firing = true;
-        while(this.firing) {
+        while (this.firing) {
             this.arrow.position.x -= 5;
         }
         setTimeout(() => {
             this.firing = false;
         }, 3000)
-        if(!this.firing) {
+        if (!this.firing) {
 
         }
     }

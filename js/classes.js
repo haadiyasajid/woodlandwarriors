@@ -6,7 +6,7 @@ class Position {
     }
 }
 
-const ANIMATION_SPEED = 5; //Larger value = slower animation
+const ANIMATION_SPEED = 12; //Larger value = slower animation
 
 
 //Class representing a sprite torender an image
@@ -93,7 +93,7 @@ class Player extends Sprite {
         this.health = 100
         this.framesCurrent = 0
         this.framesElapsed = 0
-        this.framesHold = 5
+        this.framesHold = ANIMATION_SPEED
         this.sprites = sprites
         this.lastKey
         this.isAlive = true

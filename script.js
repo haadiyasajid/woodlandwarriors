@@ -8,14 +8,14 @@ let gameOver = false;
 //---------------------Constants---------------------
 //Play around with them to adjust the game
 
-const GRAVITY = 0.5  //Strength of downward acceleration after jump
-const JUMP_FORCE = -15   //Jumping power for both players
+const GRAVITY = 0.2  //Strength of downward acceleration after jump
+const JUMP_FORCE = -10   //Jumping power for both players
 const GAME_WIDTH = 1024  //Canvas (playable area) width
 const GAME_HEIGHT = 576 //Canvas (playable area) height
-const MOVEMENT_SPEED = 5 //Speed of player movement
+const MOVEMENT_SPEED = 3 //Speed of player movement
 const ATTACK_DAMAGE = 10; //Amount of damage an attack will cause
 const HEALTH_WARNING = 20; //Amout of health upon which bar turns red
-const HEALTH_REPLENISH_PAUSE = 500; //Amount of frames after which health replenish bottle will appear
+const HEALTH_REPLENISH_PAUSE = 1000; //Amount of frames after which health replenish bottle will appear
 const HEALTH_REPLENISH_STAY = 5000; //Number of milliseconds for which health replenish bottle will stay on screen
 const ARROW_SHOOT_TIME = 2000 //Number of milliseconds for which arrow remains active
 const ARROW_SPEED = 5; //Speed of arrow firing
